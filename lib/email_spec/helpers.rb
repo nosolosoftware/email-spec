@@ -124,8 +124,13 @@ module EmailSpec
     # e.g. Click here in  <a href="http://confirm">Click here</a>
     def parse_email_for_anchor_text_link(email, link_text)
       if textify_images(email.default_part_body) =~ %r{<a[^>]*href=['"]?([^'"]*)['"]?[^>]*?>[^<]*?#{link_text}[^<]*?</a>}
-        URI.split($1)[5..-1].compact!.join("?").gsub("&amp;", "&")
+        #URI.split($1)[5..-1].compact!.join("?").gsub("&amp;", "&")
         # sub correct ampersand after rails switches it (http://dev.rubyonrails.org/ticket/4002)
+        uri = URI($1)
+        uri.scheme = nil
+        uri.host = nil
+        uri.port = nil
+        uri.to_s
       else
         return nil
       end
